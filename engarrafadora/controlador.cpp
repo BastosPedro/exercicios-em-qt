@@ -60,7 +60,7 @@ void Controlador::plasticReady(bool ready)
 {
     if(ready){
         m_timer = new QTimer();
-        qDebug() << "(0seg)abrindo A, B fechado, e C aberto";
+        setActorA(true);
         QObject::connect(m_timer, &QTimer::timeout, this, &Controlador::setProgress);
         m_timer->setInterval(5000);
         m_timer->start();
@@ -69,27 +69,28 @@ void Controlador::plasticReady(bool ready)
 
 void Controlador::setProgress()
 {
-    //qDebug() << "aumentou +1";
-    progress += 1;
-    if((int) progress == 1){
+    if(progress == 0)qDebug() << "~ (0seg)abrindo A, B fechado, e C aberto ~";
+    progress++;
+    if(progress == 1){
         setActorA(false);
         setActorB(false);
         setActorC(true);
         m_timer->setInterval(500);
-        qDebug() << "(+5seg) fechando A, abrindo B, fechando C";
+        qDebug() << "~ (+5seg) fechando A, abrindo B, fechando C ~";
     }
-    if((int) progress == 2){
+    if(progress == 2){
         m_timer->setInterval(4000);
         setActorB(true);
-        qDebug() << "(+0.5seg)fechando B";
+        qDebug() << "~ (+0.5seg)fechando B ~";
     }
     if(progress == 3) emit this->stopAll();
 }
 
 
 void Controlador::stopAll(){
-    quantity +=1;
-    qDebug() << "(+4seg)abrindo C, soltando garrafa";
+    quantity++;
+    setActorC(false);
+    qDebug() << "~ (+4seg)abrindo C, soltando garrafa ~";
     qDebug() << "num. de garrafas:" << quantity;
     m_timer->setInterval(5000);
     progress = 0;

@@ -37,8 +37,7 @@ public slots:
     void stopAll();
 
 private:
-    int quantity;
-    double progress;
+    int quantity, progress;
     bool actorA, actorB, actorC;
     QTimer* m_timer;
 };
