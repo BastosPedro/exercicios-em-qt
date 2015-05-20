@@ -1,80 +1,101 @@
 #include "controlador.h"
 
 
-bool controlador::getActorA() const
+Controlador::Controlador(QObject * parent): QObject(parent)
+{
+    quantity = 0;
+    actorA = actorC = false;
+    actorB = true;
+    progress = 0;
+}
+
+Controlador::~Controlador()
+{
+
+}
+
+bool Controlador::getActorA() const
 {
     return actorA;
 }
 
-void controlador::setActorA(bool value)
+void Controlador::setActorA(bool value)
 {
-    actorA = value;
+    if(actorA != value) {
+        actorA = value;
+        qDebug() << Q_FUNC_INFO << "ActorA == " << value;
+        emit this->actorAChanged(value);
+    }
 }
 
-bool controlador::getActorB() const
+bool Controlador::getActorB() const
 {
     return actorB;
 }
 
-void controlador::setActorB(bool value)
+void Controlador::setActorB(bool value)
 {
-    actorB = value;
+    if(actorB != value) {
+        actorB = value;
+        qDebug() << Q_FUNC_INFO << "ActorB == " << value;
+        emit this->actorBChanged(value);
+    }
 }
 
-bool controlador::getActorC() const
+bool Controlador::getActorC() const
 {
     return actorC;
 }
 
-void controlador::setActorC(bool value)
+void Controlador::setActorC(bool value)
 {
-    actorC = value;
+    if(actorC != value) {
+        actorC = value;
+        qDebug() << Q_FUNC_INFO << "ActorC == " << value;
+        emit this->actorCChanged(value);
+    }
 }
 
-void controlador::plasticReady(bool ready)
+void Controlador::plasticReady(bool ready)
 {
-    //m_timer->stop();
-    setActorA(false);
-    setActorB(false);
-    setActorC(true);
-    m_timer->setInterval(500);
-    qDebug() << "(5seg) fechando A, abrindo B, fechando C";
+    if(ready){
+        m_timer = new QTimer();
+        qDebug() << "(0seg)abrindo A, B fechado, e C aberto";
+        QObject::connect(m_timer, &QTimer::timeout, this, &Controlador::setProgress);
+        m_timer->setInterval(5000);
+        m_timer->start();
+    }
 }
 
-void controlador::setProgress()
+void Controlador::setProgress()
 {
     //qDebug() << "aumentou +1";
     progress += 1;
-    if((int) progress == 1) emit this->plasticReady(true);
+    if((int) progress == 1){
+        setActorA(false);
+        setActorB(false);
+        setActorC(true);
+        m_timer->setInterval(500);
+        qDebug() << "(+5seg) fechando A, abrindo B, fechando C";
+    }
     if((int) progress == 2){
         m_timer->setInterval(4000);
         setActorB(true);
-        qDebug() << "(0.5seg)fechando B";
+        qDebug() << "(+0.5seg)fechando B";
     }
     if(progress == 3) emit this->stopAll();
 }
 
 
-void controlador::stopAll(){
-    qDebug() << "(4seg)abrindo C, soltando garrafa";
-    m_timer->stop();
-    //actorA = false;
-    //actorB = true;
-    actorC = false;
-
-}
-
-
-controlador::controlador()
-{
-    actorA = actorB = true;
-    actorC = false;
-    progress = 0;
-    m_timer = new QTimer();
-    qDebug() << "(0seg)abrindo A, B fechado, e C aberto";
-    QObject::connect(m_timer, &QTimer::timeout, this, &controlador::setProgress);
+void Controlador::stopAll(){
+    quantity +=1;
+    qDebug() << "(+4seg)abrindo C, soltando garrafa";
+    qDebug() << "num. de garrafas:" << quantity;
     m_timer->setInterval(5000);
-    m_timer->start();
+    progress = 0;
+    actorC = false;
 
 }
+
+
 

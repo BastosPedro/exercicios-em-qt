@@ -1,0 +1,2 @@
+OBS.:
+Por algum motivo desconhecido, o programa só irá rodar se o build estiver setado em RELEASE!

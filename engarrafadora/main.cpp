@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    controlador *acapulco = new controlador();
-
+    Controlador *montezuma = new Controlador(&a);
+    montezuma->plasticReady(true);
     return a.exec();
 }
